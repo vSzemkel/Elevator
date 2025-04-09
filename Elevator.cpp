@@ -23,13 +23,27 @@ int Elevator::GetCurrentFloor() const
     return _currentFloor;
 }
 
-bool Elevator::IndoorRequest(const int floor, notification_t callback)
+bool Elevator::IndoorRequest(const int targetFloor, notification_t callback)
 {
+    const request_t request{callback, targetFloor, direction_e::INSIDE };
+
+    std::unique_lock lock{_mutex};
+    _receiving_queue.push_back(request);
+    lock.unlock();
+    _condv.notify_one();
+
     return true;
 }
 
-bool Elevator::OutdoorRequest(const int from, const bool requestedUp, notification_t callback)
+bool Elevator::OutdoorRequest(const int fromFloor, const bool requestedUp, notification_t callback)
 {
+    const request_t request{callback, fromFloor, requestedUp ? direction_e::UP : direction_e::DOWN};
+
+    std::unique_lock lock{_mutex};
+    _receiving_queue.push_back(request);
+    lock.unlock();
+    _condv.notify_one();
+
     return true;
 }
 
