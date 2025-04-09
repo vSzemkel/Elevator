@@ -1,24 +1,26 @@
 ﻿
 #include "Elevator.h"
 
-Elevator::Elevator(const int floors)
+Elevator::Elevator(const int floorsCount)
+    : _floorsCount(floorsCount)
+    , _observers(floorsCount)
 {
 
 }
 
-std::unique_ptr<IElevator> Elevator::CreateElevator(const int floors)
+std::unique_ptr<IElevator> Elevator::CreateElevator(const int floorsCount)
 {
-    return std::unique_ptr<IElevator>(new Elevator(floors));
+    return std::unique_ptr<IElevator>(new Elevator(floorsCount));
 }
 
 int Elevator::GetFloorsCount() const
 {
-    return 0;
+    return _floorsCount;
 }
 
 int Elevator::GetCurrentFloor() const
 {
-    return _floor;
+    return _currentFloor;
 }
 
 bool Elevator::IndoorRequest(const int floor, notification_t callback)
@@ -29,4 +31,13 @@ bool Elevator::IndoorRequest(const int floor, notification_t callback)
 bool Elevator::OutdoorRequest(const int from, const bool requestedUp, notification_t callback)
 {
     return true;
+}
+
+void Elevator::Move(const int targetFloor)
+{
+    _goingUp = _currentFloor < targetFloor;
+    _currentFloor = targetFloor;
+
+    for (auto& observer : _observers[targetFloor])
+        observer();
 }
