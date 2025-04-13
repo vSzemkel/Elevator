@@ -26,10 +26,9 @@ int Elevator::GetCurrentFloor() const
 
 bool Elevator::IndoorRequest(const int targetFloor, notification_t callback)
 {
-    const request_t request{callback, targetFloor, direction_e::INSIDE };
-
     std::unique_lock lock{_req_mutex};
-    _receiving_queue.push_back(request);
+    _receiving_queue.emplace_back(targetFloor, direction_e::INSIDE);
+    _observers[targetFloor].push_back(std::move(callback));
     lock.unlock();
     _req_condv.notify_one();
 
@@ -38,10 +37,9 @@ bool Elevator::IndoorRequest(const int targetFloor, notification_t callback)
 
 bool Elevator::OutdoorRequest(const int fromFloor, const bool requestedUp, notification_t callback)
 {
-    const request_t request{callback, fromFloor, requestedUp ? direction_e::UP : direction_e::DOWN};
-
     std::unique_lock lock{_req_mutex};
-    _receiving_queue.push_back(request);
+    _receiving_queue.emplace_back(fromFloor, requestedUp ? direction_e::UP : direction_e::DOWN);
+    _observers[fromFloor].push_back(std::move(callback));
     lock.unlock();
     _req_condv.notify_one();
 
@@ -113,6 +111,8 @@ void Elevator::Move(const int targetFloor)
     _direction = _currentFloor < targetFloor ? direction_e::UP : direction_e::DOWN;
     _currentFloor = targetFloor;
 
+    std::scoped_lock lock{_req_mutex};
     for (auto& observer : _observers[targetFloor])
         observer();
+    _observers[targetFloor].clear();
 }

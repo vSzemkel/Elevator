@@ -19,7 +19,6 @@ class Elevator : public IElevator
     };
 
     struct request_t {
-        notification_t callback;
         int floor;
         direction_e direction;
     };
