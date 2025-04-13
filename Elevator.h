@@ -25,7 +25,7 @@ class Elevator : public IElevator
     };
 
   public:
-    Elevator(const int floorsCount);
+    Elevator(const int floorsCount) noexcept;
     int GetFloorsCount() const override;
     int GetCurrentFloor() const override;
     bool IndoorRequest(const int targetFloor, notification_t callback) override;
@@ -34,16 +34,24 @@ class Elevator : public IElevator
     static std::unique_ptr<IElevator> CreateElevator(const int floorsCount);
 
   private:
+    void RequestLoop();
+    void MoveLoop();
+    void ProcessRequest(request_t& request);
+    int SelectNextTargetFloor();
     void Move(const int targetFloor);
 
     std::priority_queue<int, std::vector<int>, std::greater<>> _requestsUp[2];
     std::priority_queue<int, std::vector<int>, std::less<>> _requestsDown[2];
     std::vector<request_t> _receiving_queue, _processed_queue;
     std::vector<std::vector<notification_t>> _observers;
+    std::atomic<direction_e> _direction{};
+    std::atomic<bool> _stop_requested{};
     std::atomic<int> _currentFloor{};
-    std::condition_variable _condv;
-    std::jthread _worker;
-    std::mutex _mutex;
+    std::condition_variable _req_condv;
+    std::condition_variable _mov_condv;
+    std::jthread _req_worker;
+    std::jthread _mov_worker;
+    std::mutex _req_mutex;
+    std::mutex _mov_mutex;
     int _floorsCount{};
-    bool _goingUp{};
 };
