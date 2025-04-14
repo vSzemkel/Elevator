@@ -8,6 +8,7 @@ class IElevator
     using notification_t = std::function<void()>;
 
     virtual ~IElevator() {};
+    virtual void RequestTermination() = 0;
     virtual int GetFloorsCount() const = 0;
     virtual int GetCurrentFloor() const = 0;
     virtual bool IndoorRequest(const int targetFloor, notification_t callback) = 0;

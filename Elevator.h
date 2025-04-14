@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include"IElevator.h"
+#include "IElevator.h"
 
 #include <atomic>
 #include <condition_variable>
@@ -25,6 +25,7 @@ class Elevator : public IElevator
 
   public:
     Elevator(const int floorsCount) noexcept;
+    void RequestTermination() override;
     int GetFloorsCount() const override;
     int GetCurrentFloor() const override;
     bool IndoorRequest(const int targetFloor, notification_t callback) override;

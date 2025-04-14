@@ -14,6 +14,11 @@ std::unique_ptr<IElevator> Elevator::CreateElevator(const int floorsCount)
     return std::unique_ptr<IElevator>(new Elevator(floorsCount));
 }
 
+void Elevator::RequestTermination()
+{
+    _stop_requested = true;
+}
+
 int Elevator::GetFloorsCount() const
 {
     return _floorsCount;
@@ -26,11 +31,9 @@ int Elevator::GetCurrentFloor() const
 
 bool Elevator::IndoorRequest(const int targetFloor, notification_t callback)
 {
-    std::unique_lock lock{_req_mutex};
+    // executed by elevator's moving thread, _req_mutex already owned
     _receiving_queue.emplace_back(targetFloor, direction_e::INSIDE);
     _observers[targetFloor].push_back(std::move(callback));
-    lock.unlock();
-    _req_condv.notify_one();
 
     return true;
 }
@@ -68,6 +71,7 @@ void Elevator::ProcessRequest(request_t& request)
     if (request.direction == direction_e::INSIDE)
         request.direction = (request.floor < _currentFloor) ? direction_e::DOWN : direction_e::UP;
 
+    std::unique_lock lock{_mov_mutex};
     if (request.direction == direction_e::UP) {
         if (request.direction == _direction) {
             if (_currentFloor < request.floor)
@@ -85,6 +89,9 @@ void Elevator::ProcessRequest(request_t& request)
         } else
             _requestsDown[0].push(request.floor);
     }
+
+    lock.unlock();
+    _mov_condv.notify_all();
 }
 
 void Elevator::MoveLoop()
@@ -103,6 +110,34 @@ void Elevator::MoveLoop()
 
 int Elevator::SelectNextTargetFloor()
 {
+    const auto pop_return = [](auto& queue) { const auto top = queue.top(); queue.pop(); return top; };
+
+    if (_direction == direction_e::UP) {
+        if (!_requestsUp[0].empty())
+            return pop_return(_requestsUp[0]);
+        else {
+            std::swap(_requestsUp[0], _requestsUp[1]);
+            if (!_requestsDown[0].empty())
+                return pop_return(_requestsDown[0]);
+            else {
+                std::swap(_requestsDown[0], _requestsDown[1]);
+                return SelectNextTargetFloor();
+            }
+        }
+    } else {
+        if (!_requestsDown[0].empty())
+            return pop_return(_requestsDown[0]);
+        else {
+            std::swap(_requestsDown[0], _requestsDown[1]);
+            if (!_requestsUp[0].empty())
+                return pop_return(_requestsUp[0]);
+            else {
+                std::swap(_requestsUp[0], _requestsUp[1]);
+                return SelectNextTargetFloor();
+            }
+        }
+    }
+
     return 0;
 }
 
@@ -111,8 +146,10 @@ void Elevator::Move(const int targetFloor)
     _direction = _currentFloor < targetFloor ? direction_e::UP : direction_e::DOWN;
     _currentFloor = targetFloor;
 
-    std::scoped_lock lock{_req_mutex};
+    std::unique_lock lock{_req_mutex};
     for (auto& observer : _observers[targetFloor])
         observer();
     _observers[targetFloor].clear();
+    lock.unlock();
+    _req_condv.notify_one();
 }
