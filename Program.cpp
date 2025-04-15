@@ -12,6 +12,6 @@ int main()
     ElevatorUser sciana(*elevator, "Sciana");
     sciana.CallElevator(3, 8);
 
-    elevator->RequestTermination();
+    elevator->RequestTermination(4);
     return 0;
 }

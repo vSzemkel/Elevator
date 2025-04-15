@@ -14,9 +14,15 @@ std::unique_ptr<IElevator> Elevator::CreateElevator(const int floorsCount)
     return std::unique_ptr<IElevator>(new Elevator(floorsCount));
 }
 
-void Elevator::RequestTermination()
+void Elevator::RequestTermination(const int requestsToHandle)
 {
+    if (requestsToHandle > 0)
+        while (_requestServed < requestsToHandle)
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+
     _stop_requested = true;
+    _req_condv.notify_one();
+    _mov_condv.notify_one();
 }
 
 int Elevator::GetFloorsCount() const
@@ -112,6 +118,9 @@ int Elevator::SelectNextTargetFloor()
 {
     const auto pop_return = [](auto& queue) { const auto top = queue.top(); queue.pop(); return top; };
 
+    if (_stop_requested)
+        return 0;
+
     if (_direction == direction_e::UP) {
         if (!_requestsUp[0].empty())
             return pop_return(_requestsUp[0]);
@@ -146,10 +155,13 @@ void Elevator::Move(const int targetFloor)
     _direction = _currentFloor < targetFloor ? direction_e::UP : direction_e::DOWN;
     _currentFloor = targetFloor;
 
+    auto& floorObservers = _observers[targetFloor];
     std::unique_lock lock{_req_mutex};
-    for (auto& observer : _observers[targetFloor])
+    for (auto& observer : floorObservers)
         observer();
-    _observers[targetFloor].clear();
+
+    _requestServed += int(floorObservers.size());
+    floorObservers.clear();
     lock.unlock();
     _req_condv.notify_one();
 }

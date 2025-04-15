@@ -25,9 +25,9 @@ class Elevator : public IElevator
 
   public:
     Elevator(const int floorsCount) noexcept;
-    void RequestTermination() override;
     int GetFloorsCount() const override;
     int GetCurrentFloor() const override;
+    void RequestTermination(const int requestsToHandle) override;
     bool IndoorRequest(const int targetFloor, notification_t callback) override;
     bool OutdoorRequest(const int fromFloor, const bool requestedUp, notification_t callback) override;
 
@@ -47,6 +47,7 @@ class Elevator : public IElevator
     std::atomic<direction_e> _direction{};
     std::atomic<bool> _stop_requested{};
     std::atomic<int> _currentFloor{};
+    std::atomic<int> _requestServed{};
     std::condition_variable _req_condv;
     std::condition_variable _mov_condv;
     std::jthread _req_worker;

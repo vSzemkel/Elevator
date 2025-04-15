@@ -14,7 +14,7 @@ ElevatorUser::ElevatorUser(IElevator& elevator, std::string name)
 bool ElevatorUser::CallElevator(const int initFloor, const int targetFloor)
 {
     const auto floorsCount = _elevator.GetFloorsCount();
-    if (initFloor < 0 || floorsCount <= initFloor || targetFloor < 0 || targetFloor <= initFloor || initFloor == targetFloor) {
+    if (initFloor < 0 || floorsCount <= initFloor || targetFloor < 0 || floorsCount <= targetFloor || initFloor == targetFloor) {
         std::cerr << std::format("Invalid move from {} to {} requested by {}.\n", initFloor, targetFloor, _name);
         return false;
     }
@@ -44,6 +44,7 @@ void ElevatorUser::EnterCabin()
     }
 
     _insideCabin = true;
+    std::cout << std::format("{} enters the cabin on floor {}\n", _name, _initFloor);
  
     auto callback = [&]() { this->ExitCabin(); };
     _elevator.IndoorRequest(_targetFloor, std::move(callback));
@@ -56,5 +57,11 @@ void ElevatorUser::ExitCabin()
         return;
     }
 
+    if (!_insideCabin) {
+        std::cerr << std::format("{} requested to exit cabin on floor {} when being outside the cabin.\n", _name, _targetFloor);
+        return;
+    }
+
     _insideCabin = false;
+    std::cout << std::format("{} exits the cabin on floor {}\n", _name, _targetFloor);
 }
