@@ -1,0 +1,405 @@
+@startuml To be included
+
+skinparam linetype polyline
+skinparam defaultTextAlignment center
+
+<style>
+rectangle {
+  Margin 0
+  Padding 0
+}
+</style>
+
+!procedure StartInterface($name, $alias)
+    !$interfaceAlias = $alias + "_interface"
+    label $alias [
+    {{
+        <style>
+            document {
+                BackgroundColor LightGrey
+                Margin 0
+                Padding 0
+            }
+            interface {
+                Margin 0
+                Padding 0
+            }
+        </style>
+        interface "$name" as $interfaceAlias #LightGrey {
+!endprocedure
+
+!procedure StartNewInterface($name, $alias)
+    !$interfaceAlias = $alias + "_interface"
+    label $alias [
+    {{
+        <style>
+            document {
+                BackgroundColor LightSkyBlue
+                Margin 0
+                Padding 0
+            }
+            interface {
+                Margin 0
+                Padding 0
+            }
+        </style>
+        interface "$name" as $interfaceAlias #LightSkyBlue {
+!endprocedure
+
+!procedure StartChangedInterface($name, $alias)
+    !$interfaceAlias = $alias + "_interface"
+    label $alias [
+    {{
+        <style>
+            document {
+                BackgroundColor LightCoral
+                Margin 0
+                Padding 0
+            }
+            interface {
+                Margin 0
+                Padding 0
+            }
+        </style>
+        interface "$name" as $interfaceAlias #LightCoral {
+!endprocedure
+
+!procedure EndInterface()
+        }
+    }}
+    ]
+!endprocedure
+
+!procedure StartClass($name, $alias)
+    !$classAlias = $alias + "_class"
+    label $alias [
+    {{
+        <style>
+            document {
+                BackgroundColor LightGrey
+                Margin 0
+                Padding 0
+            }
+            class {
+                Margin 0
+                Padding 0
+            }
+        </style>
+        class "$name" as $classAlias #LightGrey {
+!endprocedure
+
+!procedure StartNewClass($name, $alias)
+    !$classAlias = $alias + "_class"
+    label $alias [
+    {{
+        <style>
+            document {
+                BackgroundColor LightSkyBlue
+                Margin 0
+                Padding 0
+            }
+            class {
+                Margin 0
+                Padding 0
+            }
+        </style>
+        class "$name" as $classAlias #LightSkyBlue {
+!endprocedure
+
+!procedure StartChangedClass($name, $alias)
+    !$classAlias = $alias + "_class"
+    label $alias [
+    {{
+        <style>
+            document {
+                BackgroundColor LightCoral
+                Margin 0
+                Padding 0
+            }
+            class {
+                Margin 0
+                Padding 0
+            }
+        </style>
+        class "$name" as $classAlias #LightCoral {
+!endprocedure
+
+!procedure EndClass()
+        }
+    }}
+    ]
+!endprocedure
+
+!procedure StartInterface($name)
+    StartInterface($name, $name)
+!endprocedure
+!procedure StartNewInterface($name)
+    StartNewInterface($name, $name)
+!endprocedure
+!procedure StartChangedInterface($name)
+    StartChangedInterface($name, $name)
+!endprocedure
+!procedure StartClass($name)
+    StartClass($name, $name)
+!endprocedure
+!procedure StartNewClass($name)
+    StartNewClass($name, $name)
+!endprocedure
+!procedure StartChangedClass($name)
+    StartChangedClass($name, $name)
+!endprocedure
+
+!procedure Class($name)
+    StartClass($name, $name)
+    EndClass()
+!endprocedure
+
+!procedure ChangedClass($name)
+    StartChangedClass($name, $name)
+    EndClass()
+!endprocedure
+
+!procedure NewClass($name)
+    StartNewClass($name, $name)
+    EndClass()
+!endprocedure
+
+!procedure Class($name, $alias)
+    StartClass($name, $alias)
+    EndClass()
+!endprocedure
+
+!procedure ChangedClass($name, $alias)
+    StartChangedClass($name, $alias)
+    EndClass()
+!endprocedure
+
+!procedure NewClass($name, $alias)
+    StartNewClass($name, $alias)
+    EndClass()
+!endprocedure
+
+!procedure Interface($name)
+    StartInterface($name, $name)
+    EndInterface()
+!endprocedure
+
+!procedure ChangedInterface($name)
+    StartChangedInterface($name, $name)
+    EndInterface()
+!endprocedure
+
+!procedure NewInterface($name)
+    StartNewInterface($name, $name)
+    EndInterface()
+!endprocedure
+
+!procedure Interface($name, $alias)
+    StartInterface($name, $alias)
+    EndInterface()
+!endprocedure
+
+!procedure ChangedInterface($name, $alias)
+    StartChangedInterface($name, $alias)
+    EndInterface()
+!endprocedure
+
+!procedure NewInterface($name, $alias)
+    StartNewInterface($name, $alias)
+    EndInterface()
+!endprocedure
+
+!procedure HardwareModule($name, $doc, $alias)
+    !if ($doc!="")
+        !$doc = "\n" + "(" + $doc + ")"
+    !endif
+    rectangle "**$name** $doc" as $alias #TECHNOLOGY
+!endprocedure
+
+!procedure HardwareModule($name, $alias)
+    HardwareModule($name, "", $alias)
+!endprocedure
+
+!procedure StartHardwareModule($name, $alias)
+    rectangle "$name" as $alias #TECHNOLOGY {
+!endprocedure
+
+!procedure StartSoftwareModule($name, $doc, $alias)
+    !if ($doc!="")
+        !$doc = "\n" + "(" + $doc + ")"
+    !endif
+    rectangle "**$name** $doc" as $alias #White;line.dashed;line:blue {
+!endprocedure
+
+!procedure StartSoftwareModule($name, $alias)
+    StartSoftwareModule($name, "", $alias)
+!endprocedure
+
+!procedure SoftwareModule($name, $doc, $alias)
+    !if ($doc!="")
+        !$doc = "\n" + "(" + $doc + ")"
+    !endif
+    rectangle "**$name** $doc" as $alias #line.dashed;line:blue
+!endprocedure
+
+!procedure SwModuleGroup($name, $doc, $alias)
+    !if ($doc!="")
+        !$doc = "\n" + "(" + $doc + ")"
+    !endif
+    storage "**$name** $doc" as $alias #White {
+!endprocedure
+
+!procedure EndSoftwareModule()
+    }
+!endprocedure
+
+!procedure EndHardwareModule()
+    }
+!endprocedure
+
+!procedure EndSwModuleGroup()
+    }
+!endprocedure
+
+!procedure OffTheShelve($name, $doc, $alias)
+    !if ($doc!="")
+        !$doc = "\n" + "(" + $doc + ")"
+    !endif
+    rectangle "**$name** $doc" as $alias #line.bold
+!endprocedure
+
+!procedure NewSoftwareModule($name, $doc, $alias)
+    !if ($doc!="")
+        !$doc = "\n" + "(" + $doc + ")"
+    !endif
+    rectangle "**$name** $doc" as $alias #LightSkyBlue;line.dashed;line:blue
+!endprocedure
+
+!procedure ChangedSoftwareModule($name, $doc, $alias)
+    !if ($doc!="")
+        !$doc = "\n" + "(" + $doc + ")"
+    !endif
+    rectangle "**$name** $doc" as $alias #LightCoral;line.dashed;line:blue
+!endprocedure
+
+!procedure ExternalSystem($name, $alias)
+    rectangle "$name" as $alias #Grey
+!endprocedure
+
+!procedure ReferToSwModuleGroup($name, $alias)
+    storage "$name" as $alias #White
+!endprocedure
+
+!procedure SwModuleGroup($name, $alias)
+    SwModuleGroup($name, "", $alias)
+!endprocedure
+
+!procedure LegendBox($include)
+label LegendBox [
+{{
+    skinparam nodesep 10
+    skinparam ranksep 5
+    scale 0.95
+    !$include = " " + $include + " "
+    rectangle "Legend" #Khaki;line.bold {
+        !if (%strpos($include, " Interface ") != -1 || %strpos($include, " StartInterface ") != -1)
+            StartInterface("Interface", "UNMODIFIED_INTERFACE")
+                +public
+            EndInterface()
+        !endif
+        !if (%strpos($include, " NewInterface ") != -1 || %strpos($include, " StartNewInterface ") != -1)
+            StartNewInterface("New interface", "NEW_INTERFACE")
+                +public
+            EndInterface()
+        !endif
+        !if (%strpos($include, " ChangedInterface ") != -1 || %strpos($include, " StartChangedInterface ") != -1)
+            StartChangedInterface("Changed interface", "CHANGED_INTERFACE")
+                +public
+            EndInterface()
+        !endif
+        !if (%strpos($include, " Class ") != -1 || %strpos($include, " StartClass ") != -1)
+            StartClass("Class", "UNMODIFIED_CLASS")
+                +public
+                #protected
+                -private
+            EndClass()
+        !endif
+        !if (%strpos($include, " NewClass ") != -1 || %strpos($include, " StartNewClass ") != -1)
+            StartNewClass("New class", "NEW_CLASS")
+                +public
+                #protected
+                -private
+            EndClass()
+        !endif
+        !if (%strpos($include, " ChangedClass ") != -1 || %strpos($include, " StartChangedClass ") != -1)
+            StartChangedClass("Changed class", "CHANGED_CLASS")
+                +public
+                #protected
+                -private
+            EndClass()
+        !endif
+        !if (%strpos($include, " HardwareModule ") != -1 || %strpos($include, "StartHardwareModule ") != -1)
+            HardwareModule("HW Module", "", "HW_LEGEND")
+        !endif
+        !if (%strpos($include, " SoftwareModule ") != -1 || %strpos($include, "StartSoftwareModule ") != -1)
+            SoftwareModule("SW Module", "", "SW_LEGEND")
+        !endif
+        !if (%strpos($include, " OffTheShelve ") != -1)
+            OffTheShelve("Off-the-shelve SW", "", "OTS_LEGEND")
+        !endif
+        !if (%strpos($include, " ChangedSoftwareModule ") != -1)
+            ChangedSoftwareModule("Changed SW Module", "", "CHANGED_LEGEND")
+        !endif
+        !if (%strpos($include, " NewSoftwareModule ") != -1)
+            NewSoftwareModule("New SW Module", "", "NEW_LEGEND")
+        !endif
+        !if (%strpos($include, " ExternalSystem ") != -1)
+            ExternalSystem("External Systems", "OTHER_LEGEND")    
+        !endif
+        !if (%strpos($include, " Cloud ") != -1)
+            ExternalSystem("Other Systems", "OTHER_LEGEND")
+            cloud {
+                ExternalSystem("Other Systems in the cloud", "CLOUD_LEGEND")
+            }
+            OTHER_LEGEND -[hidden]down-> CLOUD_LEGEND
+        !endif
+        !if (%strpos($include, " SwModuleGroup ") != -1 || %strpos($include, " ReferToSwModuleGroup ") != -1)
+            SwModuleGroup("SW Module Group", "ModuleGroup_LEGEND")
+            EndSoftwareModule()
+        !endif
+        circle " " as A1
+        circle " " as B1
+        circle " " as A2
+        circle " " as B2
+        A1 -> B1: Unidirectional SW Interface
+        A2 <-> B2: Bidirectional SW Interface
+        A1 -down[hidden]-> A2
+        !if (%strpos($include, " Analog ") != -1)
+            circle " " as A3
+            circle " " as B3
+            circle " " as A4
+            circle " " as B4
+            A3 <.> B3: Bidirectional Analog Interface
+            A4 .> B4: Unidirectional Analog Interface
+            A2 -down[hidden]-> A3
+            A3 -down[hidden]-> A4
+        !endif
+        !if (%strpos($include, " Owns ") != -1)
+            circle " " as A5
+            circle " " as B5
+            circle " " as A6
+            circle " " as B6
+            A5 "1" *-right-> "*" B5: Owns multiple instances of
+            A6 "1" *-right-> "1" B6: Owns one instance of
+            A5 -down[hidden]-> A6
+        !endif
+        !if (%strpos($include, " Inherits ") != -1)
+            circle " " as A7
+            circle " " as B7
+            A7 -right-|> B7: Inherits from
+        !endif
+}}
+]
+!endprocedure
+
+@enduml

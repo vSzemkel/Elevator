@@ -1,0 +1,37 @@
+'please refer to https://plantuml.com/sequence-diagram
+@startuml
+!include .\templates.puml
+
+skinparam ArrowFontSize 16
+skinparam ParticipantFontSize 16
+skinparam sequenceGroupFontSize 16
+
+title <size:25>Elevator User Story
+participant ElevatorUser as EU #orange 
+participant ElevatorRequestHandler as ER #orange
+participant ElevatorMoveHandler as EM #orange
+
+skinparam sequenceMessageAlign direction
+
+activate EU
+activate ER
+EU -> EU: CallElevator(from, to)
+EU -> ER: OutdoorRequest(from, dir)
+ER -> ER: ProcessRequest(request)
+activate EM
+ER -> EM: SelectNextTargetFloor()
+deactivate ER
+EM -> EM: Move()
+EM --> EU: EnterCabin()
+deactivate EM
+EU -> ER: IndoorRequest(to)
+activate ER
+ER -> ER: ProcessRequest(request)
+activate EM
+ER -> EM: SelectNextTargetFloor()
+deactivate ER
+EM -> EM: Move()
+EM --> EU: ExitCabin()
+deactivate EM
+deactivate EU
+@enduml
