@@ -54,5 +54,6 @@ class Elevator : public IElevator
     std::jthread _mov_worker;
     std::mutex _req_mutex;
     std::mutex _mov_mutex;
+    int _requestQueueSize{};
     int _floorsCount{};
 };

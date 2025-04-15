@@ -97,6 +97,7 @@ void Elevator::ProcessRequest(request_t& request)
             _requestsDown[0].push(request.floor);
     }
 
+    ++_requestQueueSize;
     lock.unlock();
     _mov_condv.notify_all();
 }
@@ -105,9 +106,10 @@ void Elevator::MoveLoop()
 {
     while (!_stop_requested) {
         std::unique_lock lock{_mov_mutex};
-        while (_requestsUp[0].empty() && _requestsUp[1].empty() && _requestsDown[0].empty() && _requestsDown[1].empty() && !_stop_requested)
+        while (_requestQueueSize == 0 && !_stop_requested)
             _mov_condv.wait(lock);
 
+        --_requestQueueSize;
         const int nextFloor = SelectNextTargetFloor();
         lock.unlock();
 
