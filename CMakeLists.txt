@@ -9,9 +9,11 @@ endif()
 
 project ("Elevator")
 
-set(HEADERS "IElevator.h" "Elevator.h" "ElevatorUser.h")
-set(SOURCE_FILES "Program.cpp" "Elevator.cpp" "ElevatorUser.cpp")
+set(HEADERS "IElevator.h" "Elevator.h" "ElevatorUser.h" "pch.h")
+set(SOURCE_FILES "Program.cpp" "Elevator.cpp" "ElevatorUser.cpp" "pch.cpp")
+
 add_executable (Elevator ${HEADERS} ${SOURCE_FILES})
+target_precompile_headers(Elevator PRIVATE pch.h)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Elevator PROPERTY CXX_STANDARD 20)

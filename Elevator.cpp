@@ -1,4 +1,5 @@
 ﻿
+#include "pch.h"
 #include "Elevator.h"
 
 Elevator::Elevator(const int floorsCount) noexcept
@@ -155,13 +156,13 @@ void Elevator::Move(const int targetFloor)
     _direction = _currentFloor < targetFloor ? direction_e::UP : direction_e::DOWN;
     _currentFloor = targetFloor;
 
-    auto& floorObservers = _observers[targetFloor];
     std::unique_lock lock{_req_mutex};
+    auto& floorObservers = _observers[targetFloor];
     for (auto& observer : floorObservers)
         observer();
 
     _requestServed += int(floorObservers.size());
     floorObservers.clear();
     lock.unlock();
-    _req_condv.notify_one();
+    _req_condv.notify_one(); // handle inside requests
 }
