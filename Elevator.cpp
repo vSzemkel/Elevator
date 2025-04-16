@@ -36,20 +36,20 @@ int Elevator::GetCurrentFloor() const
     return _currentFloor;
 }
 
-bool Elevator::IndoorRequest(const int targetFloor, notification_t callback)
+bool Elevator::IndoorRequest(const int targetFloor, notification_t&& callback)
 {
     // executed by elevator's moving thread, _req_mutex already owned
     _receiving_queue.emplace_back(targetFloor, direction_e::INSIDE);
-    _observers[targetFloor].push_back(std::move(callback));
+    _observers[targetFloor].emplace_back(std::move(callback));
 
     return true;
 }
 
-bool Elevator::OutdoorRequest(const int fromFloor, const bool requestedUp, notification_t callback)
+bool Elevator::OutdoorRequest(const int fromFloor, const bool requestedUp, notification_t&& callback)
 {
     std::unique_lock lock{_req_mutex};
     _receiving_queue.emplace_back(fromFloor, requestedUp ? direction_e::UP : direction_e::DOWN);
-    _observers[fromFloor].push_back(std::move(callback));
+    _observers[fromFloor].emplace_back(std::move(callback));
     lock.unlock();
     _req_condv.notify_one();
 

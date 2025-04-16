@@ -28,8 +28,8 @@ class Elevator : public IElevator
     int GetFloorsCount() const override;
     int GetCurrentFloor() const override;
     void RequestTermination(const int requestsToHandle) override;
-    bool IndoorRequest(const int targetFloor, notification_t callback) override;
-    bool OutdoorRequest(const int fromFloor, const bool requestedUp, notification_t callback) override;
+    bool IndoorRequest(const int targetFloor, notification_t&& callback) override;
+    bool OutdoorRequest(const int fromFloor, const bool requestedUp, notification_t&& callback) override;
 
     static std::unique_ptr<IElevator> CreateElevator(const int floorsCount);
 
