@@ -23,4 +23,9 @@ Elevator moving thread is responsible for determination current elevator's direc
 - Access to queues is synchronized with mutex/conditional variable
 - Access to elevator's primitive attributes is synchronized with std::atomic
 
-![Sequence diagram](https://github.com/vSzemkel/Elevator/blob/main/elevator.png)
+<p>
+<div style="display: flex; justify-content: space-around;">
+  <img src="https://github.com/vSzemkel/Elevator/blob/main/UML/elevator-sequence.png" alt="Sequence diagram" width="50%">
+  <img src="https://github.com/vSzemkel/Elevator/blob/main/UML/elevator-classes.png" alt="Class hierarchy" width="70%">
+</div>
+</p>

@@ -1,0 +1,64 @@
+@startuml
+!include ./templates.puml
+
+title <size:25>Elevator Class Diagram
+' Define the interfaces and classes
+interface IElevator {
+    + int GetFloorsCount() const
+    + int GetCurrentFloor() const
+    + void RequestTermination(int requestsToHandle)
+    + bool IndoorRequest(int targetFloor, notification_t&& callback)
+    + bool OutdoorRequest(int fromFloor, bool requestedUp, notification_t&& callback)
+}
+
+class Elevator {
+    - enum direction_e { DOWN, INSIDE, UP }
+    - struct request_t { int floor; direction_e direction }
+    - std::priority_queue<int, std::vector<int>, std::greater<>> _requestsUp[2]
+    - std::priority_queue<int, std::vector<int>, std::less<>> _requestsDown[2]
+    - std::vector<request_t> _receiving_queue, _processed_queue
+    - std::vector<std::vector<notification_t>> _observers
+    - std::atomic<direction_e> _direction
+    - std::atomic<bool> _stop_requested
+    - std::atomic<int> _currentFloor
+    - std::atomic<int> _requestServed
+    - std::condition_variable _req_condv
+    - std::condition_variable _mov_condv
+    - std::jthread _req_worker
+    - std::jthread _mov_worker
+    - std::mutex _req_mutex
+    - std::mutex _mov_mutex
+    - int _requestQueueSize
+    - int _floorsCount
+    + Elevator(int floorsCount) noexcept
+    + int GetFloorsCount() const
+    + int GetCurrentFloor() const
+    + void RequestTermination(int requestsToHandle)
+    + bool IndoorRequest(int targetFloor, notification_t&& callback)
+    + bool OutdoorRequest(int fromFloor, bool requestedUp, notification_t&& callback)
+    + static std::unique_ptr<IElevator> CreateElevator(int floorsCount)
+    - void RequestLoop()
+    - void MoveLoop()
+    - void ProcessRequest(request_t& request)
+    - int SelectNextTargetFloor()
+    - void Move(int targetFloor)
+}
+
+class ElevatorUser {
+    - IElevator& _elevator
+    - std::string _name
+    - int _initFloor{-1}
+    - int _targetFloor{-1}
+    - bool _insideCabin{false}
+    + ElevatorUser(IElevator& elevator, std::string name)
+    + bool CallElevator(int initFloor, int targetFloor)
+    + void EnterCabin()
+    + void ExitCabin()
+}
+
+' Relationships
+IElevator <|.. Elevator
+IElevator <--* ElevatorUser : uses
+'ElevatorUser *--> IElevator : uses
+
+@enduml
