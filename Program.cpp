@@ -10,7 +10,8 @@ int main()
     eva.CallElevator(0, 7);
     ElevatorUser sciana(*elevator, "Sciana");
     sciana.CallElevator(3, 8);
+    eva.CallElevator(7, 0);
 
-    elevator->RequestTermination(4);
+    elevator->RequestTermination(6);
     return 0;
 }

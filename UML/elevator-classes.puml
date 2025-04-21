@@ -45,11 +45,12 @@ class Elevator {
 }
 
 class ElevatorUser {
+    - std::binary_semaphore _enterCabin
     - IElevator& _elevator
     - std::string _name
-    - int _initFloor{-1}
-    - int _targetFloor{-1}
-    - bool _insideCabin{false}
+    - int _initFloor
+    - int _targetFloor
+    - bool _insideCabin
     + ElevatorUser(IElevator& elevator, std::string name)
     + bool CallElevator(int initFloor, int targetFloor)
     + void EnterCabin()

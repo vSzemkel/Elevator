@@ -13,6 +13,7 @@ class ElevatorUser
     void ExitCabin();
 
   private:
+    std::binary_semaphore _enterCabin{1};
     IElevator& _elevator;
     std::string _name;
     int _initFloor{-1};

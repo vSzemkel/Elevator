@@ -22,6 +22,7 @@ bool ElevatorUser::CallElevator(const int initFloor, const int targetFloor)
         return false;
     }
 
+    _enterCabin.acquire();
     _initFloor = initFloor;
     _targetFloor = targetFloor;
 
@@ -62,4 +63,5 @@ void ElevatorUser::ExitCabin()
 
     _insideCabin = false;
     std::cout << std::format("{} exits the cabin on floor {}\n", _name, _targetFloor);
+    _enterCabin.release();
 }
