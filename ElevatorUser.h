@@ -13,10 +13,10 @@ class ElevatorUser
     void ExitCabin();
 
   private:
-    std::binary_semaphore _enterCabin{1};
     IElevator& _elevator;
     std::string _name;
     int _initFloor{-1};
     int _targetFloor{-1};
-    bool _insideCabin{false};
+    bool _insideCabin{};
+    std::atomic<bool> _elevatorCalled{};
 };
