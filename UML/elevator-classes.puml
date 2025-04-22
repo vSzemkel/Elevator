@@ -20,8 +20,9 @@ class Elevator {
     - std::vector<std::vector<notification_t>> _observers
     - std::atomic<direction_e> _direction
     - std::atomic<bool> _stop_requested
-    - std::atomic<int> _currentFloor
+    - std::atomic<int> _requestsToHandle
     - std::atomic<int> _requestServed
+    - std::atomic<int> _currentFloor
     - std::condition_variable _req_condv
     - std::condition_variable _mov_condv
     - std::jthread _req_worker

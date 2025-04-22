@@ -15,11 +15,10 @@ std::unique_ptr<IElevator> Elevator::CreateElevator(const int floorsCount)
     return std::unique_ptr<IElevator>(new Elevator(floorsCount));
 }
 
-void Elevator::RequestTermination(const int requestsToHandle)
+void Elevator::RequestTermination()
 {
-    if (requestsToHandle > 0)
-        while (_requestServed < requestsToHandle)
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+    while (_requestServed < _requestsToHandle)
+        std::this_thread::sleep_for(std::chrono::seconds(1));
 
     _stop_requested = true;
     _req_condv.notify_one();
@@ -53,6 +52,7 @@ bool Elevator::OutdoorRequest(const int fromFloor, const bool requestedUp, notif
     lock.unlock();
     _req_condv.notify_one();
 
+    _requestsToHandle += 2;
     return true;
 }
 

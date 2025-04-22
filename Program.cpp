@@ -12,6 +12,6 @@ int main()
     sciana.CallElevator(3, 8);
     eva.CallElevator(7, 0);
 
-    elevator->RequestTermination(6);
+    elevator->RequestTermination();
     return 0;
 }
