@@ -11,6 +11,7 @@ class ElevatorUser
     bool CallElevator(const int initFloor, const int targetFloor);
     void EnterCabin();
     void ExitCabin();
+    void ExitBuilding();
 
   private:
     IElevator& _elevator;

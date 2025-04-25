@@ -68,3 +68,8 @@ void ElevatorUser::ExitCabin()
     _elevatorCalled = false;
     _elevatorCalled.notify_one();
 }
+
+void ElevatorUser::ExitBuilding()
+{
+    _elevatorCalled.wait(true);
+}

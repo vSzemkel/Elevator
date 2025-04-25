@@ -17,7 +17,7 @@ std::unique_ptr<IElevator> Elevator::CreateElevator(const int floorsCount)
 
 void Elevator::RequestTermination()
 {
-    while (_requestServed < _requestsToHandle)
+    while (_requestServed == 0 || _requestServed < _requestsToHandle)
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
     _stop_requested = true;
