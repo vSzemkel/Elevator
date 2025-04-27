@@ -72,4 +72,5 @@ void ElevatorUser::ExitCabin()
 void ElevatorUser::ExitBuilding()
 {
     _elevatorCalled.wait(true);
+    std::cout << std::format("\033[33m{} exits on {}.\033[0m\n", _name, _targetFloor);
 }

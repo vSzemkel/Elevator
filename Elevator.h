@@ -44,6 +44,7 @@ class Elevator : public IElevator
     std::priority_queue<int, std::vector<int>, std::less<>> _requestsDown[2];
     std::vector<request_t> _receiving_queue, _processed_queue;
     std::vector<std::vector<notification_t>> _observers;
+    std::vector<std::atomic<bool>> _floorRequested;
     std::atomic<direction_e> _direction{};
     std::atomic<bool> _stop_requested{};
     std::atomic<int> _requestsToHandle{};

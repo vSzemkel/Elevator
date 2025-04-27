@@ -4,6 +4,7 @@
 
 Elevator::Elevator(const int floorsCount) noexcept
     : _observers(floorsCount)
+    , _floorRequested(floorsCount)
     , _req_worker([&]() { RequestLoop(); })
     , _mov_worker([&]() { MoveLoop(); })
     , _floorsCount(floorsCount)
@@ -75,6 +76,8 @@ void Elevator::RequestLoop()
 
 void Elevator::ProcessRequest(request_t& request)
 {
+    if (_floorRequested[request.floor].exchange(true))
+        return;
     if (request.direction == direction_e::INSIDE)
         request.direction = (request.floor < _currentFloor) ? direction_e::DOWN : direction_e::UP;
 
@@ -113,7 +116,8 @@ void Elevator::MoveLoop()
         const int nextFloor = SelectNextTargetFloor();
         lock.unlock();
 
-        Move(nextFloor);
+        if (!_stop_requested)
+            Move(nextFloor);
     }
 }
 
@@ -157,12 +161,14 @@ void Elevator::Move(const int targetFloor)
 {
     _direction = _currentFloor < targetFloor ? direction_e::UP : direction_e::DOWN;
     _currentFloor = targetFloor;
+    std::cout << std::format("\033[32mElevator stops on {}.\033[0m\n", targetFloor);
 
     std::unique_lock lock{_req_mutex};
     auto& floorObservers = _observers[targetFloor];
     for (auto& observer : floorObservers)
         observer();
 
+    _floorRequested[targetFloor] = false;
     _requestServed += int(floorObservers.size());
     floorObservers.clear();
     lock.unlock();
