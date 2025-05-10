@@ -32,3 +32,8 @@ Elevator moving thread is responsible for determination current elevator's direc
   <img src="https://github.com/vSzemkel/Elevator/blob/main/UML/elevator-classes.png" alt="Class hierarchy" width="70%">
 </div>
 </p>
+
+## Profiling
+`wpr -start generalprofile -filemode`<br>
+`elevator.exe`<br>
+`wpr -stop elevator.etl`

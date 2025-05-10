@@ -76,28 +76,29 @@ void Elevator::RequestLoop()
 
 void Elevator::ProcessRequest(request_t& request)
 {
-    if (_floorRequested[request.floor].exchange(true))
+    const auto& floor = request.floor;
+    if (_floorRequested[floor].exchange(true))
         return;
     if (request.direction == direction_e::INSIDE)
-        request.direction = (request.floor < _currentFloor) ? direction_e::DOWN : direction_e::UP;
+        request.direction = (floor < _currentFloor) ? direction_e::DOWN : direction_e::UP;
 
     std::unique_lock lock{_mov_mutex};
     if (request.direction == direction_e::UP) {
         if (request.direction == _direction) {
-            if (_currentFloor < request.floor)
-                _requestsUp[0].push(request.floor);
+            if (_currentFloor < floor)
+                _requestsUp[0].push(floor);
             else
-                _requestsUp[1].push(request.floor);
+                _requestsUp[1].push(floor);
         } else
-            _requestsUp[0].push(request.floor);
+            _requestsUp[0].push(floor);
     } else {
         if (request.direction == _direction) {
-            if (request.floor < _currentFloor)
-                _requestsDown[0].push(request.floor);
+            if (floor < _currentFloor)
+                _requestsDown[0].push(floor);
             else
-                _requestsDown[1].push(request.floor);
+                _requestsDown[1].push(floor);
         } else
-            _requestsDown[0].push(request.floor);
+            _requestsDown[0].push(floor);
     }
 
     ++_requestQueueSize;
@@ -165,7 +166,7 @@ void Elevator::Move(const int targetFloor)
 
     std::unique_lock lock{_req_mutex};
     auto& floorObservers = _observers[targetFloor];
-    for (auto& observer : floorObservers)
+    for (const auto& observer : floorObservers)
         observer();
 
     _floorRequested[targetFloor] = false;
